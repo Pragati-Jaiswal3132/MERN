@@ -1,0 +1,173 @@
+// src/components/Manage.js
+
+import React, { useState, useEffect, useContext } from 'react';
+import axios from 'axios';
+import { CollectionContext } from '../context/CollectionContext'; // Import the context
+
+
+const Manage = ({adminName }) => {
+  const { collectionName, setCollectionName } = useContext(CollectionContext);
+  const auth = JSON.parse(localStorage.getItem('user'));
+  
+  const [files, setFiles] = useState([]);
+  const [selectedFile, setSelectedFile] = useState(null);
+  const [errorMessage, setErrorMessage] = useState('');
+  const [updateMessage, setUpdateMessage] = useState('');
+  const [certificateID, setCertificateID] = useState('');
+  const [newRowData, setNewRowData] = useState({
+    studentName: '',
+    internshipDomain: '',
+    startDate: '',
+    endDate: ''
+  });
+
+  
+  useEffect(() => {
+    const fetchFiles = async () => {
+      try {
+        const res = await axios.get('http://localhost:5000/api/manage/files',{
+          params: { adminName: adminName }
+        });
+        setFiles(res.data);
+      } catch (err) {
+        setErrorMessage('Failed to retrieve files');
+        console.error('Error fetching files:', err);
+      }
+    };
+
+    fetchFiles();
+  }, [adminName]);
+
+  const viewFile = async (collectionName) => {
+    try {
+      const res = await axios.get(`http://localhost:5000/api/manage/file/${collectionName}`);
+      setSelectedFile(res.data);
+      setErrorMessage('');
+    } catch (err) {
+      setErrorMessage('Error fetching file data');
+    }
+  };
+
+  const updateFile = async () => {
+    try {
+      const res = await axios.put(`http://localhost:5000/api/manage/file/${collectionName}`, { certificateID, ...newRowData });
+      setUpdateMessage(res.data.message);
+      setSelectedFile(null);
+      await viewFile(collectionName); // Refresh the file data
+    } catch (err) {
+      setUpdateMessage('Update failed: ' + (err.response?.data.message || 'Unknown error'));
+    }
+  };
+
+  const deleteRow = async () => {
+    try {
+      const res = await axios.delete(`http://localhost:5000/api/manage/file/${collectionName}/${certificateID}`);
+      setUpdateMessage(res.data.message);
+      setSelectedFile(null);
+      await viewFile(collectionName); // Refresh the file data
+    } catch (err) {
+      setUpdateMessage('Delete failed: ' + (err.response?.data.message || 'Unknown error'));
+    }
+  };
+
+  const deleteCollection = async (collectionName) => {
+    try {
+      const res = await axios.delete(`http://localhost:5000/api/manage/file/${collectionName}`);
+      setUpdateMessage(res.data.message);
+      setFiles(files.filter(file => file.collectionName !== collectionName)); // Remove from UI
+      
+      setSelectedFile(null);
+    } catch (err) {
+      setUpdateMessage('Delete failed: ' + (err.response?.data.message || 'Unknown error'));
+    }
+  };
+  
+
+  if (errorMessage) {
+    return <div>{errorMessage}</div>;
+  }
+
+  return (
+    <div>
+      <h2>Welcome {adminName}</h2>
+      <p>Check the status of your uploaded files below:</p>
+
+      {files.map(file => (
+        <div key={file._id}>
+          <h3>{file.collectionName} - ({file.status === 'success' ? 'Success' : 'Failed'})</h3>
+          <button onClick={() => viewFile(file.collectionName)}>View</button>
+          <button onClick={() => deleteCollection(file.collectionName)}>Delete Collection</button>
+        </div>
+      ))}
+
+      {selectedFile && (
+        <div>
+          <h4>{selectedFile.collectionName}</h4>
+          <table>
+            <thead>
+              <tr>
+                <th>Certificate ID</th>
+                <th>Student Name</th>
+                <th>Internship Domain</th>
+                <th>Start Date</th>
+                <th>End Date</th>
+                <th>Actions</th>
+              </tr>
+            </thead>
+            <tbody>
+              {selectedFile.rows.map(row => (
+                <tr key={row.certificateID}>
+                  <td>{row.certificateID}</td>
+                  <td>{row.studentName}</td>
+                  <td>{row.internshipDomain}</td>
+                  <td>{row.startDate}</td>
+                  <td>{row.endDate}</td>
+                  <td>
+                    <button onClick={() => setCertificateID(row.certificateID)}>Update</button>
+                    <button onClick={() => deleteRow(row.certificateID)}>Delete</button>
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+
+          {certificateID && (
+            <div>
+              <h4>Update Certificate</h4>
+              <input
+                type="text"
+                placeholder="Student Name"
+                value={newRowData.studentName}
+                onChange={(e) => setNewRowData({ ...newRowData, studentName: e.target.value })}
+              />
+              <input
+                type="text"
+                placeholder="Internship Domain"
+                value={newRowData.internshipDomain}
+                onChange={(e) => setNewRowData({ ...newRowData, internshipDomain: e.target.value })}
+              />
+              <input
+                type="date"
+                placeholder="Start Date"
+                value={newRowData.startDate}
+                onChange={(e) => setNewRowData({ ...newRowData, startDate: e.target.value })}
+              />
+              <input
+                type="date"
+                placeholder="End Date"
+                value={newRowData.endDate}
+                onChange={(e) => setNewRowData({ ...newRowData, endDate: e.target.value })}
+              />
+              <button onClick={updateFile}>Update</button>
+            </div>
+          )}
+        </div>
+      )}
+
+      {errorMessage && <p>{errorMessage}</p>}
+      {updateMessage && <p>{updateMessage}</p>}
+    </div>
+  );
+};
+
+export default Manage;

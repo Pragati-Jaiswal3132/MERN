@@ -1,0 +1,206 @@
+// src/components/Manage.js
+
+import React, { useState, useEffect, useContext } from 'react';
+import axios from 'axios';
+import { CollectionContext } from '../context/CollectionContext'; // Import the context
+
+const pluralize = (str) => {
+  str = str.toLowerCase();
+  if (str.endsWith('y') && !str.endsWith('ay') && !str.endsWith('ey') && !str.endsWith('iy') && !str.endsWith('oy') && !str.endsWith('uy')) {
+      return str.slice(0, -1) + 'ies';
+  }
+  if (str.endsWith('s')) {
+      return str; // Already plural
+  }
+  return str + 's';
+};
+
+
+const Manage = ({adminName }) => {
+  const { collectionName, setCollectionName } = useContext(CollectionContext);
+  const auth = JSON.parse(localStorage.getItem('user'));
+  const [data, setData] = useState([]);
+  const [files, setFiles] = useState([]);
+  const [selectedFile, setSelectedFile] = useState(null);
+  const [errorMessage, setErrorMessage] = useState('');
+  const [updateMessage, setUpdateMessage] = useState('');
+  const [certificateID, setCertificateID] = useState(null);
+  const [newRowData, setNewRowData] = useState({
+    studentName: '',
+    internshipDomain: '',
+    startDate: '',
+    endDate: ''
+  });
+
+  useEffect(() => {
+    const fetchFiles = async () => {
+      try {
+        const res = await axios.get('http://localhost:5000/get-files',{
+          params: { adminName: adminName }
+        });
+        setFiles(res.data);
+      } catch (err) {
+        setErrorMessage('Failed to retrieve files');
+        console.error('Error fetching files:', err);
+      }
+    };
+
+    fetchFiles();
+  }, [adminName]);
+
+  //this is view code:
+
+  const handleFetchData = async () => {
+    try {
+        // Convert the collection name to lowercase and pluralize it
+        const formattedCollectionName = pluralize(collectionName);
+
+        const response = await axios.get(`http://localhost:5000/api/manage/file/${formattedCollectionName}`);
+        setData(response.data);
+        setSelectedFile({ collectionName, rows: response.data });
+        setErrorMessage('');
+    } catch (error) {
+        setErrorMessage('Error fetching collection data');
+        setData([]);
+    }
+};
+
+
+
+const updateFile = async () => {
+  try {
+      await axios.put(`http://localhost:5000/api/manage/file/${certificateID}`, newRowData);
+      const updatedRows = selectedFile.rows.map(row =>
+          row.certificateID === certificateID ? { ...row, ...newRowData } : row
+      );
+      setSelectedFile({ ...selectedFile, rows: updatedRows });
+      setUpdateMessage('Certificate updated successfully');
+      setCertificateID(null);
+      setNewRowData({
+          studentName: '',
+          internshipDomain: '',
+          startDate: '',
+          endDate: ''
+      });
+  } catch (error) {
+      setErrorMessage('Error updating certificate');
+  }
+};
+
+  const deleteRow = async (certificateID) => {
+    try {
+      const res = await axios.delete(`http://localhost:5000/api/manage/file/${certificateID}`);
+      setUpdateMessage(res.data.message);
+      setSelectedFile({
+        ...selectedFile,
+        rows: selectedFile.rows.filter(row => row.certificateID !== certificateID)
+    });
+    setErrorMessage('');
+  } catch (error) {
+      setErrorMessage('Error deleting row');
+  }
+  };
+
+  const deleteCollection = async (collectionName) => {
+    try {
+      const formattedCollectionName = pluralize(collectionName);
+      const res = await axios.delete(`http://localhost:5000/api/manage/file/${formattedCollectionName}`);
+      setUpdateMessage(res.data.message);
+      setFiles(files.filter(file => file.collectionName !== collectionName)); // Remove from UI
+      
+      setSelectedFile(null);
+      setErrorMessage('');
+    } catch (err) {
+      setUpdateMessage('Delete failed: ' + (err.response?.data.message || 'Unknown error'));
+    }
+  };
+  
+
+  if (errorMessage) {
+    return <div>{errorMessage}</div>;
+  }
+
+  return (
+    <div>
+      <h2>Welcome {adminName}</h2>
+      <p>Check the status of your uploaded files below:</p>
+
+      {files.map(file => (
+        <div key={file._id}>
+          <h3>{file.collectionName} - ({file.status === 'success' ? 'Success' : 'Failed'})</h3>
+          <button onClick={() => handleFetchData(file.collectionName)}>View</button>
+          <button onClick={() => deleteCollection(file.collectionName)}>Delete Collection</button>
+        </div>
+      ))}
+
+      {selectedFile && (
+        <div>
+          <h4>{selectedFile.collectionName}</h4>
+          <table>
+            <thead>
+              <tr>
+                <th>Certificate ID</th>
+                <th>Student Name</th>
+                <th>Internship Domain</th>
+                <th>Start Date</th>
+                <th>End Date</th>
+                <th>Actions</th>
+              </tr>
+            </thead>
+            <tbody>
+              {selectedFile.rows.map(row => (
+                <tr key={row.certificateID}>
+                  <td>{row.certificateID}</td>
+                  <td>{row.studentName}</td>
+                  <td>{row.internshipDomain}</td>
+                  <td>{row.startDate}</td>
+                  <td>{row.endDate}</td>
+                  <td>
+                    <button onClick={() => setCertificateID(row.certificateID)}>Update</button>
+                    <button onClick={() => deleteRow(row.certificateID)}>Delete</button>
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+
+          {certificateID && (
+            <div>
+              <h4>Update Certificate</h4>
+              <input
+                type="text"
+                placeholder="Student Name"
+                value={newRowData.studentName}
+                onChange={(e) => setNewRowData({ ...newRowData, studentName: e.target.value })}
+              />
+              <input
+                type="text"
+                placeholder="Internship Domain"
+                value={newRowData.internshipDomain}
+                onChange={(e) => setNewRowData({ ...newRowData, internshipDomain: e.target.value })}
+              />
+              <input
+                type="date"
+                placeholder="Start Date"
+                value={newRowData.startDate}
+                onChange={(e) => setNewRowData({ ...newRowData, startDate: e.target.value })}
+              />
+              <input
+                type="date"
+                placeholder="End Date"
+                value={newRowData.endDate}
+                onChange={(e) => setNewRowData({ ...newRowData, endDate: e.target.value })}
+              />
+              <button onClick={updateFile}>Update</button>
+            </div>
+          )}
+        </div>
+      )}
+
+      {errorMessage && <p>{errorMessage}</p>}
+      {updateMessage && <p>{updateMessage}</p>}
+    </div>
+  );
+};
+
+export default Manage;

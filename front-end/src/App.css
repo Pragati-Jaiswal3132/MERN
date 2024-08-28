@@ -1,0 +1,334 @@
+
+
+
+*{
+  margin: 0;
+  padding: 0;
+}
+
+main {
+  padding: 20px;
+}
+
+section {
+  margin-bottom: 20px;
+}
+
+
+h2{
+  color: #32CD32;
+  text-align: center;
+  padding: 10px;
+}
+.inputDiv{
+  text-align: center;
+  padding: 20px;
+}
+.tableDiv{
+  text-align: center;
+  margin: 2% 15%;
+}
+
+h4{
+  text-align: center;
+  margin: 0px 15%;
+  text-align: center;
+  font-size: 30px;
+}
+.uploadDiv{
+  text-align: center;
+  padding: 0px 28px;
+}
+.inputLabel{
+    font-weight: 600;
+    display: block;
+    padding: 20px;
+    font-size: 22px;
+}
+
+.inputBox{
+  
+    padding: 2px;
+    margin: 11px;
+    border: 2px solid #32CD32;
+    width: 40%;
+}
+
+.logo{
+  width: 50px;
+  height: 45px;
+  border-radius: 50%;
+  float: left;
+  margin-top: 3px;
+  margin-left: 10px;
+  background-color: #fff;
+}
+.radioBtn{
+  font-weight: 500;
+  margin: 12px;
+  padding: 12px;
+  font-size: 15px;
+  
+}
+
+.appButton{
+  font-weight: bold;
+  margin-left: 45%;
+  margin-top: 40px;
+  display: block;
+  padding: 8px;
+  background-color: #43d443;
+  border: solid 1px;
+  cursor: pointer;
+}
+.flex-nav{
+  display: flex;
+  width: 100%;
+  justify-content: space-between;
+  background-color: #32CD32;
+  align-items: center;
+  justify-items: center;
+}
+.nav-ul{
+  padding: 5px;
+  
+}
+.nav-ul li{
+  display: inline-block;
+  padding: 10px;
+}
+.nav-ul li a{
+  color: white;
+  text-decoration: none;
+  padding: 5px;
+}
+img{
+  height: 250px;
+  width: auto;
+  border-radius: 50%;
+  padding: 3px;
+}
+.para{
+  padding: 20px;
+  font-size: 1.2rem;
+}
+.flex{
+  display: flex;
+}
+
+.footer{
+  
+  bottom: 0;
+  background-color: rgba(0, 0, 0, 0.51);
+  width: 100%;
+  text-align: center;
+  color: white;
+  font-weight: bold;
+}
+.App-logo {
+  height: 40vmin;
+  pointer-events: none;
+}
+
+.upload{
+  border: dashed 2.5px;
+  padding: 150px 200px;
+  border-color: #32CD32;
+  margin: 2% 10%;
+  
+  font-weight: 600;
+  background-color: #e1ffe1;
+  width:80vh;
+}
+
+.manageDiv{
+  display: flex;
+    padding: 20px;
+    margin: 10px 20% 10px 3%;
+    border: 2px solid lightcyan;
+    background-color: rgba(126, 252, 0, 0.899);
+    border-color: green;
+    border-radius: 5%;
+    
+  
+}
+
+table, th, td {
+  border: 1px solid #61ed44;
+  padding: 10px;
+  }
+
+.uploadButton{
+  font-weight: bold;
+  margin-left: 2%;
+  padding: 8px;
+  background-color: #43d443;
+  border: solid 1px;
+  cursor: pointer;
+}
+p{
+  padding: 5px 20px;
+}
+.manageButton{
+  font-weight: bold;
+  background-color: #8ff9f7f2;
+  text-align:center;
+  cursor: pointer;
+  padding: 4px;
+    
+    margin: 0px 12px;
+}
+
+.certificate-container {
+  width: 800px; /* Adjust width to fit your design */
+  height: 600px; /* Adjust height to fit your design */
+  padding: 20px;
+  background: url('/certificateTemplate.png') no-repeat center center;
+  background-size: contain;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  align-items: center;
+  position: relative;
+  font-family: 'Arial', sans-serif;
+}
+
+.certificate-header {
+  margin-top: 15%;
+  font-size: 2rem;
+  font-weight: bold;
+  margin-bottom: 10px;
+}
+
+.certificate-subheader {
+  color: white;
+  font-size: 1.2rem;
+  font-weight: bold;
+  margin-bottom: 10px;
+  margin-top:9px;
+  padding-left:50px;
+  text-align: left;
+}
+
+.certificate-text {
+  width: 100%;
+  text-align: center;
+  font-size: 16px; 
+  padding: 10px;/* Adjust the text size for better fit */
+}
+
+.certificate-content {
+  font-size: 1rem;
+  margin-bottom: 20px;
+  margin-top: 6%;
+  margin-right: 10px;
+}
+.download-button {
+  margin-top: 20px;
+}
+
+.footer-text {
+  position: absolute;
+  bottom: 10px;
+  text-align: center;
+  width: 100%;
+  font-size: 12px;
+}
+
+.verifyDiv{
+  margin:3% 10% ;
+  width: 100%;
+}
+
+.m20{
+  margin: 20px;
+}
+
+
+.download-button {
+  margin-top: 20px;
+  padding: 10px 20px;
+  font-size: 1rem;
+  background-color: #4CAF50; /* Green color */
+  color: white;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+}
+
+.download-button:hover {
+  background-color: #45a049;
+}
+
+#support {
+  padding: 20px;
+}
+
+#support h1 {
+  color: #05550c ;
+  text-align: center;
+  font-size: 2.5rem;
+}
+
+#support h2 {
+  margin-top: 20px;
+  color: #0e8a0e;
+  font-size: 2rem;
+}
+
+#support ul {
+  list-style-type: none;
+  padding: 0;
+}
+
+#support ul li {
+  margin-bottom: 15px;
+}
+
+#support ul li h4 {
+  padding: 5px;
+  text-align: left;
+  font-size: 1.5rem;
+  margin: 0;
+  color: #32CD32;
+}
+
+#support a {
+  color: #007bff;
+  text-decoration: none;
+}
+
+#support a:hover {
+  text-decoration: underline;
+}
+
+  
+@media (prefers-reduced-motion: no-preference) {
+  .App-logo {
+    animation: App-logo-spin infinite 20s linear;
+  }
+}
+
+.App-header {
+  background-color: #282c34;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  font-size: calc(10px + 2vmin);
+  color: white;
+}
+
+.App-link {
+  color: #61dafb;
+}
+
+@keyframes App-logo-spin {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
